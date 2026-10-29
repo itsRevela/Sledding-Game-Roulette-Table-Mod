@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.0 - 2026-10-29
 
 **What:** Players without the mod can play at a modded host's table.
 - **Chat betting:** `!bet <spot> <amount>`, `!bets`, `!clear`, `!spin` and a paged `!help`. The host's mod catches the commands before they reach chat (both the server path and the host's own send path, which bypasses the server handler). It records the bets and settles them when the real wheel lands, through point RPCs the game already ships: the hide-and-seek award pays wins, and the arcade Big Wheel's spend RPC charges losses in 5,000 steps.
