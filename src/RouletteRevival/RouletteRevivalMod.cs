@@ -23,9 +23,13 @@ namespace RouletteRevival
         private RouletteHudBinder _hudBinder;
         private string _lastError;
 
+        /// <summary>Settings for Harmony patches, which are static and can't receive them by injection.</summary>
+        internal static RouletteSettings Settings { get; private set; }
+
         public override void OnInitializeMelon()
         {
             _settings = new RouletteSettings();
+            Settings = _settings;
             _spawner = new RouletteTableSpawner();
             _relocator = new TableRelocator(_spawner, _settings);
             _hudBinder = new RouletteHudBinder();
@@ -36,6 +40,15 @@ namespace RouletteRevival
             }
 
             LoggerInstance.Msg($"Loaded. Host a lobby to place the table; host presses F{_settings.RelocateFunctionKey} to move it.");
+        }
+
+        public override void OnLateInitializeMelon()
+        {
+            // Confirms in the log which game methods the Harmony patches attached to.
+            foreach (var method in HarmonyInstance.GetPatchedMethods())
+            {
+                LoggerInstance.Msg($"Patched {method.DeclaringType?.Name}.{method.Name}");
+            }
         }
 
         public override void OnUpdate()

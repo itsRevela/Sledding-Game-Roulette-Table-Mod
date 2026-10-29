@@ -18,6 +18,7 @@ namespace RouletteRevival.Config
         private readonly MelonPreferences_Entry<float> _z;
         private readonly MelonPreferences_Entry<float> _yaw;
         private readonly MelonPreferences_Entry<string> _relocateKey;
+        private readonly MelonPreferences_Entry<bool> _pointTestCommands;
 
         public RouletteSettings()
         {
@@ -33,9 +34,13 @@ namespace RouletteRevival.Config
             _yaw = _category.CreateEntry("Yaw", fallback.YawDegrees, "Yaw (degrees)");
             _relocateKey = _category.CreateEntry("RelocateKey", DefaultRelocateKey, "Relocate hotkey",
                 "Host only: moves the table in front of you and remembers the spot. F1-F12.");
+            _pointTestCommands = _category.CreateEntry("PointTestCommands", false, "Point test commands",
+                "Host only, diagnostics: players can type '!rtest pay <points>' or '!rtest charge [count]' in chat to be paid or charged.");
         }
 
         public bool Enabled => _enabled.Value;
+
+        public bool PointTestCommands => _pointTestCommands.Value;
 
         /// <summary>The configured pose, or the built-in default when none was saved or the saved one is invalid.</summary>
         public TablePose SpawnPose =>
