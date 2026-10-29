@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.1 - 2026-10-29
 
 **What:**
 - The release bundle now ships `install.bat` and `scripts/install.ps1` with CRLF line endings.
