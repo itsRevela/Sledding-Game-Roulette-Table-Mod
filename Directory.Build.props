@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup>
+    <!-- Override on the command line if the game lives elsewhere: -p:GameDir="D:\Games\Sledding Game" -->
+    <GameDir Condition="'$(GameDir)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Sledding Game</GameDir>
+    <MelonLoaderDir>$(GameDir)\MelonLoader</MelonLoaderDir>
+    <Il2CppAssembliesDir>$(MelonLoaderDir)\Il2CppAssemblies</Il2CppAssembliesDir>
+    <LangVersion>latest</LangVersion>
+    <!-- Il2CppInterop's UnityEngine.CoreModule exports a public NullableContextAttribute without the compiler's
+         expected constructor (CS0656), so nullable annotations cannot be emitted against the game assemblies. -->
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+</Project>

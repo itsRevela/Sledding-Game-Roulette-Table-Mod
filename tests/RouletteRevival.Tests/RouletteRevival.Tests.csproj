@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <!-- The mod itself only loads inside the game's IL2CPP runtime, so tests compile its engine-free sources directly. -->
+  <ItemGroup>
+    <Compile Include="..\..\src\RouletteRevival\Placement\TablePose.cs" Link="Linked\TablePose.cs" />
+    <Compile Include="..\..\src\RouletteRevival\Placement\PlacementMath.cs" Link="Linked\PlacementMath.cs" />
+    <Compile Include="..\..\src\RouletteRevival\Input\HotkeyParser.cs" Link="Linked\HotkeyParser.cs" />
+    <Compile Include="..\..\src\RouletteRevival\Spawning\PrefabNames.cs" Link="Linked\PrefabNames.cs" />
+    <Compile Include="..\..\src\RouletteRevival\Hud\HudPaths.cs" Link="Linked\HudPaths.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\tools\ReleaseTool\ReleaseTool.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="FluentAssertions" Version="7.0.0" />
+  </ItemGroup>
+
+</Project>

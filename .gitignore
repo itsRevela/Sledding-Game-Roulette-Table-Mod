@@ -1,0 +1,9 @@
+bin/
+obj/
+*.user
+.vs/
+dist/
+TestResults/
+
+# Reverse-engineering notes reconstruct the game's compiled code; kept local, not published.
+documentation/research/

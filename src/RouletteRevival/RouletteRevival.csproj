@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>RouletteRevival</AssemblyName>
+    <RootNamespace>RouletteRevival</RootNamespace>
+    <Version>1.1.0</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- MelonLoader + Il2CppInterop runtime (never copied: they ship with MelonLoader). -->
+  <ItemGroup>
+    <Reference Include="MelonLoader" HintPath="$(MelonLoaderDir)\net6\MelonLoader.dll" Private="false" />
+    <Reference Include="0Harmony" HintPath="$(MelonLoaderDir)\net6\0Harmony.dll" Private="false" />
+    <Reference Include="Il2CppInterop.Runtime" HintPath="$(MelonLoaderDir)\net6\Il2CppInterop.Runtime.dll" Private="false" />
+    <Reference Include="Il2CppInterop.Common" HintPath="$(MelonLoaderDir)\net6\Il2CppInterop.Common.dll" Private="false" />
+  </ItemGroup>
+
+  <!-- Interop assemblies MelonLoader generates on first launch. -->
+  <ItemGroup>
+    <Reference Include="Il2Cppmscorlib" HintPath="$(Il2CppAssembliesDir)\Il2Cppmscorlib.dll" Private="false" />
+    <Reference Include="Assembly-CSharp" HintPath="$(Il2CppAssembliesDir)\Assembly-CSharp.dll" Private="false" />
+    <Reference Include="Il2CppFishNet.Runtime" HintPath="$(Il2CppAssembliesDir)\Il2CppFishNet.Runtime.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(Il2CppAssembliesDir)\UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(Il2CppAssembliesDir)\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine.PhysicsModule" HintPath="$(Il2CppAssembliesDir)\UnityEngine.PhysicsModule.dll" Private="false" />
+    <Reference Include="UnityEngine.InputLegacyModule" HintPath="$(Il2CppAssembliesDir)\UnityEngine.InputLegacyModule.dll" Private="false" />
+    <Reference Include="UnityEngine.UI" HintPath="$(Il2CppAssembliesDir)\UnityEngine.UI.dll" Private="false" />
+    <Reference Include="UnityEngine.UIModule" HintPath="$(Il2CppAssembliesDir)\UnityEngine.UIModule.dll" Private="false" />
+    <Reference Include="UnityEngine.TextRenderingModule" HintPath="$(Il2CppAssembliesDir)\UnityEngine.TextRenderingModule.dll" Private="false" />
+    <Reference Include="Unity.TextMeshPro" HintPath="$(Il2CppAssembliesDir)\Unity.TextMeshPro.dll" Private="false" />
+    <Reference Include="Unity.InputSystem" HintPath="$(Il2CppAssembliesDir)\Unity.InputSystem.dll" Private="false" />
+  </ItemGroup>
+
+  <!-- <Version> above is the single source of truth (bumped by the release workflow); expose it to MelonInfo as a constant. -->
+  <Target Name="GenerateModVersion" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <ModVersionFile>$(IntermediateOutputPath)ModVersion.g.cs</ModVersionFile>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(ModVersionFile)" Overwrite="true" WriteOnlyWhenDifferent="true"
+                      Lines="namespace RouletteRevival { internal static class ModVersion { public const string Value = &quot;$(Version)&quot;%3B } }" />
+    <ItemGroup>
+      <Compile Include="$(ModVersionFile)" />
+      <FileWrites Include="$(ModVersionFile)" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Opt-in deploy: dotnet build -c Release -p:Deploy=true -->
+  <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(Deploy)' == 'true'">
+    <MakeDir Directories="$(GameDir)\Mods" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GameDir)\Mods" />
+    <Message Importance="high" Text="Deployed $(TargetFileName) to $(GameDir)\Mods" />
+  </Target>
+
+</Project>

@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RouletteRevival/RouletteRevival.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RouletteRevival.Tests/RouletteRevival.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/ReleaseTool/ReleaseTool.csproj" />
+  </Folder>
+</Solution>
