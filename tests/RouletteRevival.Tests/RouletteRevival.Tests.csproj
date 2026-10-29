@@ -22,6 +22,7 @@
     <Compile Include="..\..\src\RouletteRevival\ChatBetting\ChatLineFormat.cs" Link="Linked\ChatLineFormat.cs" />
     <Compile Include="..\..\src\RouletteRevival\TableLock\SpinLockRules.cs" Link="Linked\SpinLockRules.cs" />
     <Compile Include="..\..\src\RouletteRevival\BetDisplay\BetAggregation.cs" Link="Linked\BetAggregation.cs" />
+    <Compile Include="..\..\src\RouletteRevival\SpinDispatch\SpinTiming.cs" Link="Linked\SpinTiming.cs" />
   </ItemGroup>
 
   <ItemGroup>

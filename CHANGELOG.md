@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+**What:** The wheel no longer spins a second time on the screens of players without the mod.
+
+**Why:** The game keeps the bet buttons of every table it has seen and never forgets destroyed ones (a table is destroyed when the host quits or presses F8). On a game without the mod, the end-of-spin cleanup then throws inside LeanTween's update. That landed in the same frame the ball's animation finished, so the animation was never removed and played again. Games with the mod already prune the dead buttons.
+
+**How:** The host now runs the wheel's spin command itself, with the game's own logic, but sends the table's result 0.25 s after the wheel's timer. The error on unmodded games then fires after the ball's animation is gone. Games with the mod, the host included, undo the offset so board bets still pay the moment the ball lands. The host also blocks a new spin until the delayed result has gone out.
+
+**Files:** `src/RouletteRevival/SpinDispatch/` (new: `SpinTiming.cs`, `SpinCommandPatch.cs`, `SpinResultTimingPatch.cs`), `tests/RouletteRevival.Tests/SpinDispatch/SpinTimingTests.cs`, `tests/RouletteRevival.Tests/RouletteRevival.Tests.csproj`, `README.md`.
+
 ## 1.2.0 - 2026-10-29
 
 **What:** Players without the mod can play at a modded host's table.

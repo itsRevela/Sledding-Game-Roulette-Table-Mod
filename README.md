@@ -113,8 +113,10 @@ src/RouletteRevival/
   ChatBetting/                     host-side: chat commands, bet ledger, settlement via the game's point RPCs, chat output
   TableLock/                       host parks the spin timer so unmodded games can't open the table; modded games see through it
   BetDisplay/                      host combines every player's bets into one entry so each spot shows its total
+  SpinDispatch/                    host sends the spin result just after the wheel stops; modded games undo the offset
   Placement/, Input/HotkeyParser.cs, Spawning/PrefabNames.cs, Hud/HudPaths.cs, ChatBetting/*Parser.cs,
-  ChatBetting/{BetLedger,Settlement,ChatHelp,ChatLineFormat}.cs, TableLock/SpinLockRules.cs, BetDisplay/BetAggregation.cs
+  ChatBetting/{BetLedger,Settlement,ChatHelp,ChatLineFormat}.cs, TableLock/SpinLockRules.cs, BetDisplay/BetAggregation.cs,
+  SpinDispatch/SpinTiming.cs
                                    engine-free logic, compiled into the tests
 tools/ReleaseTool/                 version bump and changelog stamping used by the release workflow
 tests/RouletteRevival.Tests/       xUnit tests for the engine-free logic and the release tool
