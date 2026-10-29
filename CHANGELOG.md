@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.3 - 2026-10-29
 
 **What:** The mod can be published on Thunderstore. `scripts/package-thunderstore.ps1` builds the mod against the local game and writes `dist/RouletteRevival-X.Y.Z.zip`, ready to upload to the Sledding Game community.
 
