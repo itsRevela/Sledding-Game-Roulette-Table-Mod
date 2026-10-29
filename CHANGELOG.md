@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.2 - 2026-10-29
 
 **What:** The betting menu's "2 to 1" buttons now bet on the column they sit beside. The one next to 3-36 used to place a 1-34 bet, so the chips landed on the 1-34 row and the bet lost when 3-36 came up.
 
