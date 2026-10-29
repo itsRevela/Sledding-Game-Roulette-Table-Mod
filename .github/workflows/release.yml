@@ -91,8 +91,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           bundle="RouletteRevival-v$NEXT"
-          git archive --format=zip --prefix="$bundle/" -o "$RUNNER_TEMP/$bundle.zip" "v$NEXT" \
-            install.bat scripts src Directory.Build.props README.md CHANGELOG.md
+          stage="$RUNNER_TEMP/$bundle"
+          mkdir -p "$stage"
+          git archive "v$NEXT" install.bat scripts src Directory.Build.props README.md CHANGELOG.md | tar -x -C "$stage"
+          # git archive keeps the repository's LF endings; Windows scripts ship with CRLF.
+          find "$stage" \( -name '*.bat' -o -name '*.ps1' \) -exec sed -i 's/\r*$/\r/' {} +
+          (cd "$RUNNER_TEMP" && zip -qr "$bundle.zip" "$bundle")
           {
             cat "$RUNNER_TEMP/notes.md"
             printf '\n## Install\n\nDownload `%s.zip`, extract it anywhere and run `install.bat`. ' "$bundle"

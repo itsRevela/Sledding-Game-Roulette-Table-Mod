@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+**What:** The release bundle now ships `install.bat` and `scripts/install.ps1` with CRLF line endings.
+
+**Why:** `git archive` writes the repository's LF endings regardless of `.gitattributes`, and `cmd.exe` batch files are only fully reliable with CRLF. The v1.1.0 asset was re-uploaded with the fix.
+
+**Files:** `.github/workflows/release.yml`, `CHANGELOG.md`.
+
 ## 1.1.0 - 2026-10-29
 
 **What:** First public release, on GitHub.
