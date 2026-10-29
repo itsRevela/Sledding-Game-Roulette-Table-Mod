@@ -2,11 +2,13 @@
 
 ## Unreleased
 
-**What:** The release bundle now ships `install.bat` and `scripts/install.ps1` with CRLF line endings.
+**What:**
+- The release bundle now ships `install.bat` and `scripts/install.ps1` with CRLF line endings.
+- The installer's final "Done! Installed …" line shows only the installed path. The build log no longer gets folded into it.
 
-**Why:** `git archive` writes the repository's LF endings regardless of `.gitattributes`, and `cmd.exe` batch files are only fully reliable with CRLF. The v1.1.0 asset was re-uploaded with the fix.
+**Why:** `git archive` writes the repository's LF endings regardless of `.gitattributes`, and `cmd.exe` batch files are only fully reliable with CRLF; the v1.1.0 asset was re-uploaded with the fix. PowerShell returns everything a function writes to the output stream, so the `dotnet build` output was being returned along with the path.
 
-**Files:** `.github/workflows/release.yml`, `CHANGELOG.md`.
+**Files:** `.github/workflows/release.yml`, `scripts/install.ps1`, `CHANGELOG.md`.
 
 ## 1.1.0 - 2026-10-29
 

@@ -134,7 +134,8 @@ function Build-Mod([string]$Dotnet, [string]$Game) {
     if (-not (Test-Path $project)) { throw "Mod source not found at $project. Run install.bat from the extracted release folder." }
     $env:DOTNET_CLI_TELEMETRY_OPTOUT = "1"
     $env:DOTNET_NOLOGO = "1"
-    & $Dotnet build $project -c Release -nologo "-p:GameDir=$Game" "-p:Deploy=true"
+    # Send build output to the console; otherwise PowerShell folds it into this function's return value.
+    & $Dotnet build $project -c Release -nologo "-p:GameDir=$Game" "-p:Deploy=true" | Out-Host
     if ($LASTEXITCODE -ne 0) { throw "Building the mod failed (see the errors above)." }
     $deployed = Join-Path $Game "Mods\RouletteRevival.dll"
     if (-not (Test-Path $deployed)) { throw "Build succeeded but $deployed is missing." }
