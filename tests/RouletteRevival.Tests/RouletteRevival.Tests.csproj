@@ -13,6 +13,7 @@
     <Compile Include="..\..\src\RouletteRevival\Input\HotkeyParser.cs" Link="Linked\HotkeyParser.cs" />
     <Compile Include="..\..\src\RouletteRevival\Spawning\PrefabNames.cs" Link="Linked\PrefabNames.cs" />
     <Compile Include="..\..\src\RouletteRevival\Hud\HudPaths.cs" Link="Linked\HudPaths.cs" />
+    <Compile Include="..\..\src\RouletteRevival\Hud\ColumnRows.cs" Link="Linked\ColumnRows.cs" />
     <Compile Include="..\..\src\RouletteRevival\ChatBetting\ChatCommandParser.cs" Link="Linked\ChatCommandParser.cs" />
     <Compile Include="..\..\src\RouletteRevival\ChatBetting\BetSpot.cs" Link="Linked\BetSpot.cs" />
     <Compile Include="..\..\src\RouletteRevival\ChatBetting\AmountParser.cs" Link="Linked\AmountParser.cs" />

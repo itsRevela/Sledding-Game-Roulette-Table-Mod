@@ -114,7 +114,7 @@ src/RouletteRevival/
   TableLock/                       host parks the spin timer so unmodded games can't open the table; modded games see through it
   BetDisplay/                      host combines every player's bets into one entry so each spot shows its total
   SpinDispatch/                    host sends the spin result just after the wheel stops; modded games undo the offset
-  Placement/, Input/HotkeyParser.cs, Spawning/PrefabNames.cs, Hud/HudPaths.cs, ChatBetting/*Parser.cs,
+  Placement/, Input/HotkeyParser.cs, Spawning/PrefabNames.cs, Hud/{HudPaths,ColumnRows}.cs, ChatBetting/*Parser.cs,
   ChatBetting/{BetLedger,Settlement,ChatHelp,ChatLineFormat}.cs, TableLock/SpinLockRules.cs, BetDisplay/BetAggregation.cs,
   SpinDispatch/SpinTiming.cs
                                    engine-free logic, compiled into the tests

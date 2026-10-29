@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+**What:** The betting menu's "2 to 1" buttons now bet on the column they sit beside. The one next to 3-36 used to place a 1-34 bet, so the chips landed on the 1-34 row and the bet lost when 3-36 came up.
+
+**Why:** The game ships those three buttons in the reverse order of the number rows. The table draws and pays column bets correctly; only the menu's labels were wrong.
+
+**How:** When a game with the mod wires up a table's betting menu, it sets each "2 to 1" button's column from the numbers in its row, read from the menu's own number buttons. Applying it again changes nothing, and it stays right if the game's order is ever fixed. Chat bets (`col1`-`col3`) were never affected.
+
+**Files:** `src/RouletteRevival/Hud/ColumnRows.cs` (new), `src/RouletteRevival/Hud/ColumnButtonFix.cs` (new), `src/RouletteRevival/Hud/RouletteHudBinder.cs`, `tests/RouletteRevival.Tests/Hud/ColumnRowsTests.cs`, `tests/RouletteRevival.Tests/RouletteRevival.Tests.csproj`, `README.md`.
+
+**What:** The installer's closing message no longer says everyone who wants to bet needs the mod. It now says only the host needs it, mentions F8, and points players without the mod to `!help`.
+
+**Why:** Since 1.2.0, players without the mod can bet by chat.
+
+**Files:** `scripts/install.ps1`.
+
 ## 1.2.1 - 2026-10-29
 
 **What:** The wheel no longer spins a second time on the screens of players without the mod.

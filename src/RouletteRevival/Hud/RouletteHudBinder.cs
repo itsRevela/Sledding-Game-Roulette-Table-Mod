@@ -72,6 +72,7 @@ namespace RouletteRevival.Hud
             }
 
             PruneDestroyedButtons(ui);
+            ColumnButtonFix.Apply(table);
             ui.rouletteBetAmountText = parts.BetAmountText;
             ui.rouletteCurrentTotalBetText = parts.TotalBetText;
             ui.rouletteMaxWinText = parts.MaxWinText;
