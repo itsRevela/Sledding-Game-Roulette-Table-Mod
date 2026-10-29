@@ -1,0 +1,8 @@
+{
+  "name": "RouletteRevival",
+  "website_url": "https://github.com/itsRevela/Sledding-Game-Roulette-Table-Mod",
+  "description": "Brings back the roulette table. Only the host needs the mod: players without it bet by chat (!bet red 5k, !spin, !help). The host presses F8 to move the table.",
+  "dependencies": [
+    "LavaGang-MelonLoader-0.7.3"
+  ]
+}

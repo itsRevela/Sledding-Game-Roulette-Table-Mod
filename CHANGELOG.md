@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+**What:** The mod can be published on Thunderstore. `scripts/package-thunderstore.ps1` builds the mod against the local game and writes `dist/RouletteRevival-X.Y.Z.zip`, ready to upload to the Sledding Game community.
+
+**Why:** Mod-manager users (r2modman, Gale) can install it without the build-on-your-PC installer, and get MelonLoader 0.7.3 as a dependency.
+
+**How:** A new `thunderstore` command in the release tool builds `manifest.json` from `thunderstore/manifest.json` plus the project version, checks Thunderstore's rules (package name, description length, a 256×256 PNG icon, a manifest without a byte-order mark), and zips the manifest, the icon, the player-facing README and changelog from `thunderstore/`, and the DLL under `Mods/`. The packager refuses a version that has no section in the player changelog. It runs locally because CI has no game files to compile against. Upload stays manual.
+
+**Files:** `thunderstore/` (new: `manifest.json`, `icon.png`, `README.md`, `CHANGELOG.md`), `scripts/package-thunderstore.ps1` (new), `tools/ReleaseTool/ThunderstorePackage.cs` (new), `tools/ReleaseTool/Program.cs`, `tests/RouletteRevival.Tests/Release/ThunderstorePackageTests.cs` (new), `README.md`.
+
 ## 1.2.2 - 2026-10-29
 
 **What:** The betting menu's "2 to 1" buttons now bet on the column they sit beside. The one next to 3-36 used to place a 1-34 bet, so the chips landed on the 1-34 row and the bet lost when 3-36 came up.

@@ -11,6 +11,10 @@ This mod restores both. It also adds chat betting, so players who don't have the
 
 ## Install
 
+**With a mod manager:** install **RouletteRevival** from the [Sledding Game community on Thunderstore](https://thunderstore.io/c/sledding-game/) (r2modman, Gale, Thunderstore Mod Manager). The manager installs MelonLoader 0.7.3 for you.
+
+**Without one:**
+
 1. Download `RouletteRevival-vX.Y.Z.zip` from the [latest release](https://github.com/itsRevela/Sledding-Game-Roulette-Table-Mod/releases/latest) and extract it anywhere.
 2. Close Sledding Game and run `install.bat`.
 
@@ -99,12 +103,22 @@ When a release is due, the workflow:
 3. pushes an SSH-signed `chore(release): vX.Y.Z` commit and a signed `vX.Y.Z` tag;
 4. publishes a GitHub release with the installer bundle.
 
+**Thunderstore** needs the compiled mod, which only a PC with the game can build, so it's packaged locally. After the release workflow has bumped the version, pull and add that version's player-facing notes to `thunderstore/CHANGELOG.md` under `## X.Y.Z` (the packager refuses a version without them). Keep that file and `thunderstore/README.md` written for players: Thunderstore's moderators reject packages whose README or changelog isn't useful to users. Then run:
+
+```powershell
+pwsh scripts/package-thunderstore.ps1        # add -GameDir "D:\path\to\Sledding Game" if needed
+```
+
+It builds the mod against your game and writes `dist/RouletteRevival-X.Y.Z.zip`: `manifest.json` (from `thunderstore/manifest.json` plus the project version, depending on `LavaGang-MelonLoader-0.7.3`), `thunderstore/icon.png`, `thunderstore/README.md` as the package page, `thunderstore/CHANGELOG.md`, and the DLL under `Mods/`. Upload the zip at [thunderstore.io/package/create](https://thunderstore.io/package/create/) and pick the Sledding Game community. The DLL holds only the mod's own code; each player's MelonLoader generates the game assemblies it references.
+
 You can force a bump level from the Actions tab (**Release → Run workflow**). Signing uses the `RELEASE_SIGNING_KEY` secret and the `RELEASE_GIT_NAME`/`RELEASE_GIT_EMAIL` repository variables. The key's public half is registered on the maintainer's account as a signing key.
 
 ## Layout
 
 ```
 install.bat, scripts/install.ps1   end-user installer
+scripts/package-thunderstore.ps1   builds the Thunderstore zip into dist/
+thunderstore/                      Thunderstore manifest template, icon, and the player-facing README and changelog
 src/RouletteRevival/
   RouletteRevivalMod.cs            entry point: per-frame tick for the spawner, HUD binder, table lock, chat settlement, hotkey
   Config/RouletteSettings.cs       MelonPreferences entries
@@ -118,7 +132,7 @@ src/RouletteRevival/
   ChatBetting/{BetLedger,Settlement,ChatHelp,ChatLineFormat}.cs, TableLock/SpinLockRules.cs, BetDisplay/BetAggregation.cs,
   SpinDispatch/SpinTiming.cs
                                    engine-free logic, compiled into the tests
-tools/ReleaseTool/                 version bump and changelog stamping used by the release workflow
+tools/ReleaseTool/                 version bump and changelog stamping for the release workflow; Thunderstore packaging
 tests/RouletteRevival.Tests/       xUnit tests for the engine-free logic and the release tool
 .github/workflows/                 CI (tests) and Release
 ```
