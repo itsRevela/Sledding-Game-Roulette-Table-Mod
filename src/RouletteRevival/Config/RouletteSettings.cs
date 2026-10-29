@@ -10,6 +10,12 @@ namespace RouletteRevival.Config
         public const string CategoryId = "RouletteRevival";
         public const string DefaultRelocateKey = "F8";
 
+        /// <summary>
+        /// Ceiling for the chat stake limit: losses are charged 5,000 at a time, so this bounds a settlement to 2,000 charges
+        /// per player.
+        /// </summary>
+        public const long MaxChatBetPerSpin = 10_000_000;
+
         private readonly MelonPreferences_Category _category;
         private readonly MelonPreferences_Entry<bool> _enabled;
         private readonly MelonPreferences_Entry<bool> _useCustomPosition;
@@ -18,7 +24,9 @@ namespace RouletteRevival.Config
         private readonly MelonPreferences_Entry<float> _z;
         private readonly MelonPreferences_Entry<float> _yaw;
         private readonly MelonPreferences_Entry<string> _relocateKey;
-        private readonly MelonPreferences_Entry<bool> _pointTestCommands;
+        private readonly MelonPreferences_Entry<bool> _chatBetting;
+        private readonly MelonPreferences_Entry<long> _chatBetMaxPerSpin;
+        private readonly MelonPreferences_Entry<bool> _blockTableWithoutMod;
 
         public RouletteSettings()
         {
@@ -34,13 +42,23 @@ namespace RouletteRevival.Config
             _yaw = _category.CreateEntry("Yaw", fallback.YawDegrees, "Yaw (degrees)");
             _relocateKey = _category.CreateEntry("RelocateKey", DefaultRelocateKey, "Relocate hotkey",
                 "Host only: moves the table in front of you and remembers the spot. F1-F12.");
-            _pointTestCommands = _category.CreateEntry("PointTestCommands", false, "Point test commands",
-                "Host only, diagnostics: players can type '!rtest pay <points>' or '!rtest charge [count]' in chat to be paid or charged.");
+            _chatBetting = _category.CreateEntry("ChatBetting", true, "Chat betting",
+                "Host only: players without the mod can bet by chat ('!bet red 5000', '!bets', '!clear', '!spin', '!help').");
+            _chatBetMaxPerSpin = _category.CreateEntry("ChatBetMaxPerSpin", 500_000L, "Chat bet limit per spin",
+                "Most one player can stake on a single spin through chat (0 to 10,000,000).");
+            _blockTableWithoutMod = _category.CreateEntry("BlockTableWithoutMod", true, "Block table for players without the mod",
+                "Host only: players without the mod can't open the table (their game's betting menu is broken and traps them in the "
+                + "table camera). They bet with !bet and spin with !spin instead.");
         }
 
         public bool Enabled => _enabled.Value;
 
-        public bool PointTestCommands => _pointTestCommands.Value;
+        public bool ChatBetting => _chatBetting.Value;
+
+        public bool BlockTableWithoutMod => _blockTableWithoutMod.Value;
+
+        /// <summary>Configured per-spin chat stake limit, clamped to 0..<see cref="MaxChatBetPerSpin"/>.</summary>
+        public long ChatBetMaxPerSpin => System.Math.Clamp(_chatBetMaxPerSpin.Value, 0, MaxChatBetPerSpin);
 
         /// <summary>The configured pose, or the built-in default when none was saved or the saved one is invalid.</summary>
         public TablePose SpawnPose =>

@@ -14,6 +14,14 @@
     <Compile Include="..\..\src\RouletteRevival\Spawning\PrefabNames.cs" Link="Linked\PrefabNames.cs" />
     <Compile Include="..\..\src\RouletteRevival\Hud\HudPaths.cs" Link="Linked\HudPaths.cs" />
     <Compile Include="..\..\src\RouletteRevival\ChatBetting\ChatCommandParser.cs" Link="Linked\ChatCommandParser.cs" />
+    <Compile Include="..\..\src\RouletteRevival\ChatBetting\BetSpot.cs" Link="Linked\BetSpot.cs" />
+    <Compile Include="..\..\src\RouletteRevival\ChatBetting\AmountParser.cs" Link="Linked\AmountParser.cs" />
+    <Compile Include="..\..\src\RouletteRevival\ChatBetting\BetLedger.cs" Link="Linked\BetLedger.cs" />
+    <Compile Include="..\..\src\RouletteRevival\ChatBetting\Settlement.cs" Link="Linked\Settlement.cs" />
+    <Compile Include="..\..\src\RouletteRevival\ChatBetting\ChatHelp.cs" Link="Linked\ChatHelp.cs" />
+    <Compile Include="..\..\src\RouletteRevival\ChatBetting\ChatLineFormat.cs" Link="Linked\ChatLineFormat.cs" />
+    <Compile Include="..\..\src\RouletteRevival\TableLock\SpinLockRules.cs" Link="Linked\SpinLockRules.cs" />
+    <Compile Include="..\..\src\RouletteRevival\BetDisplay\BetAggregation.cs" Link="Linked\BetAggregation.cs" />
   </ItemGroup>
 
   <ItemGroup>

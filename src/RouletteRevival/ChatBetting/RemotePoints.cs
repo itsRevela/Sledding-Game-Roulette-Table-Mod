@@ -31,22 +31,43 @@ namespace RouletteRevival.ChatBetting
             return true;
         }
 
+        /// <summary>Credits any amount, split into payments the RPC's 32-bit points field can carry.</summary>
+        public static bool TryPayTotal(NetworkConnection player, long points, out string error)
+        {
+            error = null;
+            var remaining = points;
+            while (remaining > 0)
+            {
+                var chunk = (int)System.Math.Min(remaining, int.MaxValue);
+                if (!TryPay(player, chunk, out error))
+                {
+                    return false;
+                }
+
+                remaining -= chunk;
+            }
+
+            return true;
+        }
+
         /// <summary>
-        /// Charges one Big Wheel spin cost (5,000 in the shipped scene) through the arcade wheel's spend RPC. The client
-        /// silently skips the charge if it can't afford it.
+        /// Charges <paramref name="times"/> Big Wheel spin costs (5,000 each in the shipped scene) through the arcade wheel's
+        /// spend RPC, looking the wheel up once. The client silently skips any charge it can't afford.
         /// </summary>
-        public static bool TryChargeSpinCost(NetworkConnection player, out int costPerCharge, out string error)
+        public static bool TryChargeSpinCosts(NetworkConnection player, long times, out string error)
         {
             var wheel = Object.FindObjectOfType<ArcadeWheelSpinInteractable>();
             if (wheel == null)
             {
-                costPerCharge = 0;
                 error = "no arcade Big Wheel in this scene";
                 return false;
             }
 
-            costPerCharge = wheel.costOfSpin;
-            wheel.Target_SpendPoints(player, NoTicketReward);
+            for (var i = 0L; i < times; i++)
+            {
+                wheel.Target_SpendPoints(player, NoTicketReward);
+            }
+
             error = null;
             return true;
         }

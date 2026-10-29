@@ -1,10 +1,12 @@
 using System;
 using MelonLoader;
 using RouletteRevival;
+using RouletteRevival.ChatBetting;
 using RouletteRevival.Config;
 using RouletteRevival.Hud;
 using RouletteRevival.Input;
 using RouletteRevival.Spawning;
+using RouletteRevival.TableLock;
 
 [assembly: MelonInfo(typeof(RouletteRevivalMod), "Roulette Revival", ModVersion.Value, "itsRevela")]
 [assembly: MelonGame("The Sledding Corporation", "Sledding Game")]
@@ -21,6 +23,7 @@ namespace RouletteRevival
         private RouletteTableSpawner _spawner;
         private TableRelocator _relocator;
         private RouletteHudBinder _hudBinder;
+        private readonly TableLockEnforcer _tableLock = new TableLockEnforcer();
         private string _lastError;
 
         /// <summary>Settings for Harmony patches, which are static and can't receive them by injection.</summary>
@@ -67,6 +70,14 @@ namespace RouletteRevival
             }
 
             Guarded("table spawning", () => _spawner.Tick(_settings.SpawnPose));
+            Guarded("table lock", () =>
+            {
+                if (_settings.BlockTableWithoutMod && RouletteTableSpawner.IsHosting)
+                {
+                    _tableLock.Tick();
+                }
+            });
+            Guarded("chat bet settlement", ChatBetService.Instance.Tick);
             Guarded("relocate hotkey", () =>
             {
                 if (HotkeyReader.WasFunctionKeyPressed(_settings.RelocateFunctionKey))

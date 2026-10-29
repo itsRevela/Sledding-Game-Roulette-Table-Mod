@@ -21,6 +21,7 @@
   <!-- Interop assemblies MelonLoader generates on first launch. -->
   <ItemGroup>
     <Reference Include="Il2Cppmscorlib" HintPath="$(Il2CppAssembliesDir)\Il2Cppmscorlib.dll" Private="false" />
+    <Reference Include="Il2CppSystem.Core" HintPath="$(Il2CppAssembliesDir)\Il2CppSystem.Core.dll" Private="false" />
     <Reference Include="Assembly-CSharp" HintPath="$(Il2CppAssembliesDir)\Assembly-CSharp.dll" Private="false" />
     <Reference Include="Il2CppFishNet.Runtime" HintPath="$(Il2CppAssembliesDir)\Il2CppFishNet.Runtime.dll" Private="false" />
     <Reference Include="UnityEngine" HintPath="$(Il2CppAssembliesDir)\UnityEngine.dll" Private="false" />
