@@ -163,7 +163,8 @@ try {
 
     Write-Host ""
     Write-Host "Done! Installed $dll" -ForegroundColor Green
-    Write-Host "Host a lobby to get the roulette table. Everyone who wants to bet needs the mod too."
+    Write-Host "Host a lobby to get the roulette table (F8 moves it). Only the host needs the mod:"
+    Write-Host "players without it bet by typing !help in chat."
     exit 0
 } catch {
     Write-Host ""
