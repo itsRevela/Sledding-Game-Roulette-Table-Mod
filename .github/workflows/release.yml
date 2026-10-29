@@ -1,0 +1,102 @@
+name: Release
+
+# On every push to main: if the commits since the last v* tag include feat/fix/perf or a breaking change
+# (Conventional Commits), bump the version, stamp CHANGELOG.md, then publish a signed commit, a signed tag
+# and a GitHub release with the installer bundle. Run manually to force a bump level.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Force a bump (major, minor or patch). Leave empty to derive it from commits."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release):') }}
+    runs-on: ubuntu-latest
+    env:
+      CSPROJ: src/RouletteRevival/RouletteRevival.csproj
+      FORCED_BUMP: ${{ inputs.bump }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Test
+        run: dotnet test tests/RouletteRevival.Tests/RouletteRevival.Tests.csproj -c Release
+
+      - name: Determine next version
+        id: version
+        run: |
+          last_tag=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || true)
+          if [ -n "$last_tag" ]; then range="$last_tag..HEAD"; else range="HEAD"; fi
+          git log --format='%B%x1e' "$range" > "$RUNNER_TEMP/commits.txt"
+          next=$(dotnet run --no-build --project tools/ReleaseTool -c Release -- next-version \
+            --csproj "$CSPROJ" --commits-file "$RUNNER_TEMP/commits.txt" --force "$FORCED_BUMP")
+          echo "last tag: ${last_tag:-none}, next version: ${next:-none}"
+          echo "next=$next" >> "$GITHUB_OUTPUT"
+
+      - name: Configure signing
+        if: steps.version.outputs.next != ''
+        env:
+          RELEASE_SIGNING_KEY: ${{ secrets.RELEASE_SIGNING_KEY }}
+          GIT_NAME: ${{ vars.RELEASE_GIT_NAME }}
+          GIT_EMAIL: ${{ vars.RELEASE_GIT_EMAIL }}
+        run: |
+          if [ -z "$RELEASE_SIGNING_KEY" ] || [ -z "$GIT_NAME" ] || [ -z "$GIT_EMAIL" ]; then
+            echo "::error::Set the RELEASE_SIGNING_KEY secret and RELEASE_GIT_NAME / RELEASE_GIT_EMAIL variables."
+            exit 1
+          fi
+          mkdir -p ~/.ssh
+          install -m 600 /dev/null ~/.ssh/release_signing
+          printf '%s\n' "$RELEASE_SIGNING_KEY" > ~/.ssh/release_signing
+          git config user.name "$GIT_NAME"
+          git config user.email "$GIT_EMAIL"
+          git config gpg.format ssh
+          git config user.signingkey ~/.ssh/release_signing
+          git config commit.gpgsign true
+          git config tag.gpgsign true
+
+      - name: Commit and tag
+        if: steps.version.outputs.next != ''
+        env:
+          NEXT: ${{ steps.version.outputs.next }}
+        run: |
+          dotnet run --no-build --project tools/ReleaseTool -c Release -- apply --version "$NEXT" \
+            --csproj "$CSPROJ" --changelog CHANGELOG.md --commits-file "$RUNNER_TEMP/commits.txt" \
+            --date "$(date -u +%F)" --notes-out "$RUNNER_TEMP/notes.md"
+          git add "$CSPROJ" CHANGELOG.md
+          git commit -S -m "chore(release): v$NEXT"
+          git tag -s "v$NEXT" -m "Roulette Revival v$NEXT"
+          git push --atomic origin HEAD:main "v$NEXT"
+
+      - name: Publish GitHub release
+        if: steps.version.outputs.next != ''
+        env:
+          NEXT: ${{ steps.version.outputs.next }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          bundle="RouletteRevival-v$NEXT"
+          git archive --format=zip --prefix="$bundle/" -o "$RUNNER_TEMP/$bundle.zip" "v$NEXT" \
+            install.bat scripts src Directory.Build.props README.md CHANGELOG.md
+          {
+            cat "$RUNNER_TEMP/notes.md"
+            printf '\n## Install\n\nDownload `%s.zip`, extract it anywhere and run `install.bat`. ' "$bundle"
+            printf 'It installs MelonLoader if needed and builds the mod against your copy of the game.\n'
+          } > "$RUNNER_TEMP/body.md"
+          gh release create "v$NEXT" "$RUNNER_TEMP/$bundle.zip" --verify-tag \
+            --title "Roulette Revival v$NEXT" --notes-file "$RUNNER_TEMP/body.md"
