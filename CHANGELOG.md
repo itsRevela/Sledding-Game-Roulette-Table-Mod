@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+**What:** Players without the mod can play at a modded host's table.
+- **Chat betting:** `!bet <spot> <amount>`, `!bets`, `!clear`, `!spin` and a paged `!help`. The host's mod catches the commands before they reach chat (both the server path and the host's own send path, which bypasses the server handler). It records the bets and settles them when the real wheel lands, through point RPCs the game already ships: the hide-and-seek award pays wins, and the arcade Big Wheel's spend RPC charges losses in 5,000 steps.
+- **Table lock:** the host parks the spinner's synced "last spin" time far in the future, so games without the mod can't open the table and get trapped by its broken menu. A postfix on `RouletteSpinner.IsSpinning` lets modded games and the host use the real spin state.
+- **Combined chips:** the game draws only the last bet per spot, so two players on red showed one stack. The host now folds every player's board and chat bets into a single entry holding the per-spot totals.
+- **Chat output:** roulette lines are sent as system messages, which appear in the chat log with no speech bubble. Private replies (`!help`, `!bets`, errors) go only to the player who asked.
+- **New settings:** `ChatBetting`, `ChatBetMaxPerSpin` and `BlockTableWithoutMod`.
+
+**Why:** The betting menu is broken in every unmodded game's scene data and can't be fixed from the host. Chat betting plus host-side settlement is the only way to give those players real stakes. The table lock prevents the camera trap that used to strand them.
+
+**Files:** `src/RouletteRevival/ChatBetting/**`, `src/RouletteRevival/TableLock/**`, `src/RouletteRevival/BetDisplay/**`, `src/RouletteRevival/Config/RouletteSettings.cs`, `src/RouletteRevival/RouletteRevivalMod.cs`, `src/RouletteRevival/RouletteRevival.csproj`, `tests/RouletteRevival.Tests/{ChatBetting,TableLock,BetDisplay}/**`, `tests/RouletteRevival.Tests/RouletteRevival.Tests.csproj`, `README.md`, `CHANGELOG.md`.
+
 ## 1.1.1 - 2026-10-29
 
 **What:**

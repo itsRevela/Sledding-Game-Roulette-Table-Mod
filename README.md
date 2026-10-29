@@ -7,7 +7,7 @@ The minigame was never deleted. The game still ships the full network prefab ("R
 1. the table's placement in the world;
 2. the scene's links to the betting HUD. The HUD itself still sits, inactive, inside the prefab.
 
-This mod restores both and adds no gameplay of its own.
+This mod restores both. It also adds chat betting, so players who don't have the mod can still play at a modded host's table.
 
 ## Install
 
@@ -23,18 +23,38 @@ The installer:
 
 The mod is built on your PC because it compiles against files generated from your copy of the game, which can't be redistributed. **After a game update**, launch the game once, close it, then run `install.bat` again.
 
-**Everyone in the lobby needs the mod to bet.** The host's copy spawns the table, and FishNet replicates it to all clients, so everyone can see it and spin the wheel. Each player's copy wires up the betting HUD. A player without the mod who uses the table gets stuck in the table camera, because the game's own menu code throws on the missing HUD.
+**Only the host needs the mod.** The host's copy spawns the table, and FishNet replicates it to every player. Players with the mod use the real betting board. Players without it bet by chat (see below).
 
 ## Play
 
 - **Host** a lobby. After about 2 seconds the table appears inside the lodge arcade, by the VIP fence and the big prize wheel.
-- Walk up and interact with the **table** to open the betting board. Point at a square (mouse or gamepad) and press **Place Bet** or **Remove Bet** (likely left/right mouse button; the prompts on the board show your actual bindings). `+`/`-` change the chip size and **clear** returns your bets.
-- Interact with the **wheel** to spin. Any player can spin, and payouts go to each player's own points.
+- **With the mod:** interact with the **table** to open the betting board. Point at a square (mouse or gamepad) and press **Place Bet** or **Remove Bet** (likely left/right mouse button; the prompts on the board show your actual bindings). `+`/`-` change the chip size and **clear** returns your bets. Interact with the **wheel** to spin.
+- **Without the mod:** bet in chat (next section). The host locks the table and wheel for these players, so pressing F on them does nothing. Without the lock, the game's broken betting menu would trap them in the table camera.
 - **Host only: F8** moves the table in front of you and saves that spot for future sessions.
 
 The mod only spawns the table in lobbies you host. In anyone else's lobby it never spawns anything.
 
-Points are client-local in this game, so each player's winnings and losses go to their own save, as they did when the feature was live. Betting over 100,000 in one spin unlocks the game's Casino Visor hat.
+Points are client-local in this game, so each player's winnings and losses go to their own save, as they did when the feature was live. Board bets are taken when the wheel starts and paid when it stops. Betting over 100,000 in one spin with the board unlocks the game's Casino Visor hat.
+
+### Chat betting
+
+Anyone can type these in chat. The commands themselves never show in chat; the host's mod handles them.
+
+| Command | What it does |
+|---|---|
+| `!bet <spot> <amount>` | Bet, e.g. `!bet 17 10k`, `!bet red 5000`. Betting the same spot again adds to it. |
+| `!bets` | Lists your bets (only you see the reply). |
+| `!clear` | Takes your bets back before the spin. |
+| `!spin` | Spins the wheel once anyone has bet. |
+| `!help [page]` | Four short help pages. |
+
+Spots: `0`–`36`, `red`, `black`, `odd`, `even`, `low` (1–18), `high` (19–36), `dozen1`–`dozen3`, `col1`–`col3`. Payouts follow the game: a number wins 35×, a dozen or column 2×, everything else 1×.
+
+Chips from every player, board and chat, show as one stack per spot. Results are posted in chat ("Roulette: 17 black! Crunchy +175,000"), and each chat bettor's net result goes to their own points when the ball lands.
+
+**Limits:**
+- Chat bets go in steps of 5,000, up to 500,000 per player per spin (configurable). The game only lets a host charge a player in units of the arcade Big Wheel's 5,000 spin cost.
+- If a chat bettor can't cover a loss, their game silently skips that charge. The host can't see other players' points.
 
 ## Configure
 
@@ -46,6 +66,9 @@ Points are client-local in this game, so each player's winnings and losses go to
 | `UseCustomPosition` | `false` | Set by F8. Set it to `false` to go back to the default spot. |
 | `PositionX/Y/Z`, `Yaw` | arcade spot | Saved table position and heading, in degrees. |
 | `RelocateKey` | `F8` | Any of `F1`–`F12`. |
+| `ChatBetting` | `true` | Host only: accept `!bet`/`!clear`/`!bets`/`!spin`/`!help`. |
+| `ChatBetMaxPerSpin` | `500000` | Host only: the most one player can stake on one spin by chat (capped at 10,000,000). |
+| `BlockTableWithoutMod` | `true` | Host only: stop players without the mod from opening the table (and its wheel). |
 
 ## Develop
 
@@ -83,11 +106,15 @@ You can force a bump level from the Actions tab (**Release → Run workflow**). 
 ```
 install.bat, scripts/install.ps1   end-user installer
 src/RouletteRevival/
-  RouletteRevivalMod.cs            entry point: per-frame tick for the spawner, HUD binder and hotkey
+  RouletteRevivalMod.cs            entry point: per-frame tick for the spawner, HUD binder, table lock, chat settlement, hotkey
   Config/RouletteSettings.cs       MelonPreferences entries
   Spawning/                        host-side: find the prefab, spawn via FishNet, ground snap, F8 relocation
   Hud/                             every client: wire the prefab's HUD into UiReferenceController; input fixes
-  Placement/, Input/HotkeyParser.cs, Spawning/PrefabNames.cs, Hud/HudPaths.cs
+  ChatBetting/                     host-side: chat commands, bet ledger, settlement via the game's point RPCs, chat output
+  TableLock/                       host parks the spin timer so unmodded games can't open the table; modded games see through it
+  BetDisplay/                      host combines every player's bets into one entry so each spot shows its total
+  Placement/, Input/HotkeyParser.cs, Spawning/PrefabNames.cs, Hud/HudPaths.cs, ChatBetting/*Parser.cs,
+  ChatBetting/{BetLedger,Settlement,ChatHelp,ChatLineFormat}.cs, TableLock/SpinLockRules.cs, BetDisplay/BetAggregation.cs
                                    engine-free logic, compiled into the tests
 tools/ReleaseTool/                 version bump and changelog stamping used by the release workflow
 tests/RouletteRevival.Tests/       xUnit tests for the engine-free logic and the release tool
