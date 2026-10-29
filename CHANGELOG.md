@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.1 - 2026-10-29
 
 **What:** The wheel no longer spins a second time on the screens of players without the mod.
 
